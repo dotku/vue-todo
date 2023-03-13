@@ -1,5 +1,14 @@
 <script>
 let id = 0;
+
+function todoSelector(item) {
+  return {
+    id: item.id,
+    text: item.title,
+    done: false
+  }
+}
+
 export default {
   data() {
     return {
@@ -20,6 +29,11 @@ export default {
     removeTodo(id) {
       this.todos = this.todos.filter((item) => item.id !== id);
     },
+    async genTodos() {
+      const rspTodos = await fetch('https://jsonplaceholder.typicode.com/todos')
+        .then(rsp => rsp.json())
+      this.todos = rspTodos.filter(item => item.id < 10).map(todoSelector);
+    }
   },
   computed: {
     filterTodos() {
@@ -28,6 +42,9 @@ export default {
         : this.todos;
     },
   },
+  created() {
+    this.genTodos();
+  }
 };
 </script>
 <template>
@@ -40,7 +57,7 @@ export default {
     <ul v-if="filterTodos.length">
       <li v-for="todo in filterTodos" :key="todo.id">
         <input type="checkbox" v-model="todo.done" />
-        <span :class="{ done: todo.done }">{{ todo.text }}</span>
+        <span :class="{ done: todo.done }" class="todo-content">{{ todo.text }}</span>
         <button @click="removeTodo(todo.id)">x</button>
       </li>
     </ul>
@@ -50,12 +67,16 @@ export default {
 
 <style>
 .todo-app {
-  width: 300px;
+  width: 800px;
   text-align: left;
   margin: 20px auto;
 }
 
 .done {
   text-decoration: line-through;
+}
+
+.todo-content {
+  margin: 0 8px;
 }
 </style>
