@@ -19,6 +19,8 @@ export default {
         { id: id++, text: "todo item 2", done: false },
         { id: id++, text: "todo item 3", done: false },
       ],
+      total: 0,
+      pageSize: 10,
     };
   },
   methods: {
@@ -32,7 +34,8 @@ export default {
     async genTodos() {
       const rspTodos = await fetch('https://jsonplaceholder.typicode.com/todos')
         .then(rsp => rsp.json())
-      this.todos = rspTodos.filter(item => item.id < 10).map(todoSelector);
+      this.total = respTodos.length;
+      this.todos = rspTodos.filter(item => item.id < this.pageSize).map(todoSelector);
     }
   },
   computed: {
